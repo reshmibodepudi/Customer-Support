@@ -1,0 +1,13 @@
+DBS Credit and Debit Cards
+
+1. Debit Cards:
+   - Issued instantly upon account opening
+   - Can be used for domestic and international payments
+   - Daily withdrawal limit: INR 50,000
+   - Daily purchase limit: INR 1,00,000
+
+2. Credit Cards:
+   - Requires minimum income proof
+   - Annual fee varies by card type (INR 500–2000)
+   - Benefits: Reward points, cashback, travel perks
+   - Late payment fee: 2% of outstanding balance

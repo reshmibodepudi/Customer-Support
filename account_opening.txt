@@ -1,0 +1,15 @@
+DBS Account Opening Information
+
+1. To open a new DBS savings account, customers must:
+   - Provide valid government-issued ID (Aadhar, Passport, Voter ID).
+   - Provide proof of address (Utility bill, Rental agreement, Driving license).
+   - Submit recent passport-size photograph.
+   - Complete in-person verification or eKYC.
+
+2. Minimum balance requirements:
+   - Regular Savings Account: INR 10,000
+   - Digital Savings Account: INR 0 (no minimum balance)
+
+3. Account activation timeline:
+   - In-person branch applications: 2-3 business days
+   - Digital applications via DBS app: Instant or within 24 hours

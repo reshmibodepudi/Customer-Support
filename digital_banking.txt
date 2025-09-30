@@ -1,0 +1,15 @@
+DBS Digital Banking Services
+
+1. NetBanking:
+   - 24/7 access to account balance, statements, fund transfers
+   - NEFT, IMPS, RTGS supported
+   - Secure login with OTP
+
+2. Mobile Banking (DBS digibank app):
+   - Instant account opening with Aadhaar OTP
+   - Bill payments, recharges, fund transfers
+   - Biometric login available
+
+3. Security:
+   - Two-factor authentication mandatory
+   - Real-time fraud monitoring

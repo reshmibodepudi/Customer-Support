@@ -1,0 +1,23 @@
+DBS Loan Services
+
+1. Types of loans offered:
+   - Personal Loan
+   - Home Loan
+   - Education Loan
+   - Vehicle Loan
+
+2. Loan eligibility:
+   - Age between 21 and 60 years
+   - Stable source of income
+   - Minimum salary: INR 25,000 per month (for salaried)
+   - CIBIL score above 700
+
+3. Documentation required:
+   - Identity proof
+   - Address proof
+   - Salary slips / IT returns
+   - Bank statements (last 6 months)
+
+4. Loan processing time:
+   - Personal Loans: 24–48 hours
+   - Home Loans: 5–7 business days
