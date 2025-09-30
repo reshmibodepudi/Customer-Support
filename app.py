@@ -320,7 +320,7 @@ if __name__ == "__main__":
     if args.build:
         print("Building index from files in:", DOC_FOLDER)
         build_index()
-        print("Done. Now start the server with: python your_script_name.py")
+        print("Done. Now start the server without --build.")
     else:
         
         print("Loading index, metadata, and parent cache...")

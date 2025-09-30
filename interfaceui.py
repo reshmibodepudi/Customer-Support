@@ -133,6 +133,7 @@ st.markdown("""
         width: 48%;
         color: #1a1a1a;
     }
+            
 
     /* Buttons */
     .stButton > button {
@@ -185,8 +186,16 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+
 #sidebar
 with st.sidebar:
+    # DBS Logo
+    st.image(r"dbs_logo.png", width='stretch')  
+    st.markdown(
+        '<p style="text-align:center; font-weight:bold; color:#d32f2f; margin-top:0.5rem;">LIVE MORE, BANK LESS</p>',
+        unsafe_allow_html=True
+    )
+
     st.markdown("### Features")
     st.markdown("""
     <div class="sidebar-content">
@@ -196,7 +205,7 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    st.markdown("###  Chat history")
+    st.markdown("### Chat history")
     st.markdown(f"""
     <div class="stats-container">
         <div class="stat-item">{st.session_state.query_count}<br>Queries</div>
@@ -244,7 +253,7 @@ with col2:
         
         ("💰 Loans & Eligibility", "What types of loans are offered?"),
         ("🏧 Debit & Credit Cards", "What is daily limit of debit card?"),
-        ("📱 Digital Banking", "Tell about Net Banking")
+        ("📱 Customer Care & Support", "What is the DBS customer care number?")
     ]
     for idx, (label, query) in enumerate(quick_buttons):
         if st.button(label, key=f"quick_{idx}"):
