@@ -18,34 +18,31 @@ from transformers import pipeline
 import nltk
 from nltk.tokenize import sent_tokenize
 
-# --- Configuration for Advanced RAG ---
+#configurations
 DOC_FOLDER = "company_docs"
 INDEX_FILE = "faiss.index"
 METADATA_FILE = "documents_cache.jsonl" 
 
-# Models for Embedding and Reranking (Crucial for stability)
+#models
 EMBED_MODEL = "all-MiniLM-L6-v2" 
 RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"     
 LLM_MODEL = "google/flan-t5-base"        
 
-# Chunking Parameters
-PARENT_CHUNK_SEPARATOR = r'\n\s*\n' # Splits by double newline (paragraph/section breaks)
+#chunking
+PARENT_CHUNK_SEPARATOR = r'\n\s*\n' #split on double newlines
 SMALL_CHUNK_SIZE = 700 
 CHUNK_OVERLAP_SENTENCES = 2 
 MIN_CHUNK_LEN = 40 
 
-# Retrieval and Reranking Hyperparameters
-TOP_K_INITIAL = 15 # Initial retrieval size (high recall)
-TOP_K_FINAL = 3    # Final number of *Parent Contexts* sent to the LLM (high precision)
+# Retrieval and reranking parameters
+TOP_K_INITIAL = 15 
+TOP_K_FINAL = 3    
 SIMILARITY_THRESHOLD = 0.20 
 BATCH_SIZE = 64
-# -------------------------------------
 
-
-# --- Global Model Initialization ---
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-# Load models outside of FastAPI request handling for efficiency
+#load models
 try:
     embedder: SentenceTransformer = SentenceTransformer(EMBED_MODEL)
     reranker: CrossEncoder = CrossEncoder(RERANKER_MODEL, device=device) 
@@ -56,14 +53,14 @@ except Exception as e:
 qa_model = None  
 index: Optional[faiss.Index] = None
 metadata: List[Dict] = [] 
-parent_cache: Dict[str, str] = {} # Cache for Parent Documents
+parent_cache: Dict[str, str] = {} 
 
 app = FastAPI(title="DBS Customer Query Responder (Advanced RAG)")
 
 class Query(BaseModel):
     question: str
 
-# --- Utility Functions ---
+#functions
 
 def clean_text(t: str) -> str:
     if not t:
@@ -75,13 +72,13 @@ def clean_text(t: str) -> str:
 
 def chunk_text_sentences(text: str, size_chars: int, overlap_sentences: int) -> List[str]:
     """
-    Generates sentence-aware Small Chunks for indexing.
+    Generates sentence aware Small Chunks for indexing.
     """
     if not text: return []
     try:
         sentences = sent_tokenize(text)
     except LookupError:
-        # Fallback if punkt is not downloaded (should be fixed in build_index)
+        
         nltk.download("punkt", quiet=True)
         sentences = sent_tokenize(text)
         
@@ -99,7 +96,7 @@ def chunk_text_sentences(text: str, size_chars: int, overlap_sentences: int) -> 
         else:
             chunks.append(" ".join(current))
             
-            # Apply sentence overlap
+           
             overlap_sents = current[-overlap_sentences:] if len(current) >= overlap_sentences else current[:]
             current = overlap_sents + [s]
             current_len = sum(len(x) for x in current)
@@ -110,7 +107,7 @@ def chunk_text_sentences(text: str, size_chars: int, overlap_sentences: int) -> 
     final = [c.strip() for c in chunks if len(c.strip()) >= MIN_CHUNK_LEN]
     return final
 
-# --- Indexing Functions ---
+#indexing functions
 
 def build_index():
     """
@@ -213,7 +210,7 @@ def load_index_and_metadata() -> Tuple[faiss.Index, List[Dict], Dict[str, str]]:
     
     return idx, docs, final_parent_cache
 
-# --- RAG Endpoint ---
+#endpoints
 
 @app.post("/ask")
 def ask(query: Query):
@@ -223,7 +220,7 @@ def ask(query: Query):
 
     q_text = clean_text(query.question)
 
-    # 1. Initial Retrieval (Bi-Encoder Search on Small Chunks)
+    
     q_emb = embedder.encode([q_text], convert_to_numpy=True)
     faiss.normalize_L2(q_emb.astype(np.float32))
 
@@ -239,7 +236,7 @@ def ask(query: Query):
         candidate = metadata[idx] 
         retrieval_candidates.append({
             "query": q_text,
-            "content": candidate["content"], # Small Chunk
+            "content": candidate["content"], 
             "source": candidate["source"],
             "parent_id": candidate["parent_id"],
             "bi_encoder_score": float(sc) 
@@ -248,7 +245,7 @@ def ask(query: Query):
     if not retrieval_candidates:
         return {"answer": "I don’t know based on the provided documents.", "sources": []}
 
-    # 2. Reranking (Cross-Encoder Re-evaluation)
+    
     rerank_input = [[q_text, r['content']] for r in retrieval_candidates]
     rerank_scores = reranker.predict(rerank_input, show_progress_bar=False)
     
@@ -257,35 +254,35 @@ def ask(query: Query):
 
     reranked_candidates = sorted(retrieval_candidates, key=lambda x: x['rerank_score'], reverse=True)
 
-    # 3. Parent Document Augmentation & Final Selection (The "Fix")
+  
     final_parent_contexts = {}
     
     for candidate in reranked_candidates:
         parent_id = candidate['parent_id']
         
-        # Stop if we hit our limit
+       
         if len(final_parent_contexts) >= TOP_K_FINAL:
             break
 
-        # If we already processed this Parent, skip
+       
         if parent_id in final_parent_contexts:
             continue
             
-        # Retrieve the large, coherent parent context
+       
         parent_content = parent_cache.get(parent_id, "Context not found.")
         
         final_parent_contexts[parent_id] = {
             "source": candidate['source'],
-            "content": parent_content, # Pass the large context to the LLM
+            "content": parent_content, 
             "score": candidate['rerank_score'] 
         }
         
     retrieved_contexts = list(final_parent_contexts.values())
 
-    # 4. Generation (LLM Synthesis with Strong Guardrail)
+  
     context_parts = []
     for r in retrieved_contexts:
-        # Use the large parent content for context
+       
         context_parts.append(f"[Source: {r['source']}] {r['content']}")
 
     context = "\n\n".join(context_parts)
@@ -332,7 +329,7 @@ if __name__ == "__main__":
 
         
         print(f"Initializing LLM pipeline: {LLM_MODEL} (this may take a while)...")
-        # Initialize LLM after loading the index
+       
         qa_model = pipeline("text2text-generation", model=LLM_MODEL, device=0 if device == "cuda" else -1)
         print("LLM ready. Starting FastAPI server...")
 
