@@ -7,7 +7,7 @@ The system uses **FAISS for semantic search**, **SentenceTransformers for embedd
 
 ##  Project Overview
 ![DBS Assistant UI ](assets/image1.png)  
-*DBS Customer Support AI Assistant — example chat interface.*
+*DBS Customer Support AI Assistant - example chat interface.*
 
 ![DBS Assistant UI ](assets/image2.png)  
 *Another view of the assistant responding to a query.*
