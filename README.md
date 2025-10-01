@@ -15,12 +15,12 @@ The system uses **FAISS for semantic search**, **SentenceTransformers for embedd
 ---
 
 ##  How RAG Works in This Project
-1. **User Question** → A customer asks a banking-related query.  
-2. **Embedding & Search** → The question is converted into embeddings and searched in **FAISS** against all document chunks.  
-3. **Reranking** → A **CrossEncoder** model reranks the retrieved chunks for higher accuracy.  
-4. **Context Building** → The most relevant parent chunks are selected as context.  
-5. **LLM Response** → A **Flan-T5 model** generates the final answer using **only the retrieved context**.  
-6. **Answer with Sources** → The assistant provides a concise reply along with document sources.  
+1. **User Question** - A customer asks a banking-related query.  
+2. **Embedding & Search** - The question is converted into embeddings and searched in **FAISS** against all document chunks.  
+3. **Reranking** - A **CrossEncoder** model reranks the retrieved chunks for higher accuracy.  
+4. **Context Building** - The most relevant parent chunks are selected as context.  
+5. **LLM Response** - A **Flan-T5 model** generates the final answer using **only the retrieved context**.  
+6. **Answer with Sources** - The assistant provides a concise reply along with document sources.  
 
  This ensures **accurate, document-grounded, and hallucination-free** customer support.
 
